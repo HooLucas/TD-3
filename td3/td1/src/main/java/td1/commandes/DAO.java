@@ -51,10 +51,24 @@ public class DAO {
      * ensemble des différents produits commandés
      */
     public Set<Produit> produits() {
+        /*
+             solution alternative :
+
+            public Set<Produit> produits() {
+                Set<Commande> commandes= new HashSet<Commande>(commandes());
+                Set<String> retour=new HashSet<String>();
+                for(Commande object : set )
+                {
+                    retour.add(object.fst());
+                }
+                return retour;
+                 
+          
+         */
         return commandes.stream()
-                .flatMap(c -> c.lignes().stream())
-                .map(Paire::fst)
-                .collect(Collectors.toSet());
+                .flatMap(c -> c.lignes().stream())  // on effectue un flatmapping des éléments de commandes
+                .map(Paire::fst)  // méthode intermédiaire qui applique la fonction fst de la classe paire
+                .collect(Collectors.toSet()); //méthode finale qui renvoie un set du nom de chaque commande
     }
 
     /**
@@ -62,8 +76,8 @@ public class DAO {
      */
     public List<Commande> selectionCommande(Predicate<Commande> p) {
         return commandes.stream()
-            .filter(p)
-            .collect(Collectors.toList());
+            .filter(p) // on filtre les commandes par une predicat p donné en parametres
+            .collect(Collectors.toList());// méthode finale qui retourne une liste des commandes ayant vérifié un prédicat
     }
 
     /**
@@ -71,8 +85,8 @@ public class DAO {
      */
     public List<Commande> selectionCommandeSurExistanceLigne(Predicate<Paire<Produit,Integer>> p) {
         return commandes.stream()
-            .filter(c -> c.lignes().stream().anyMatch(p))
-            .collect(Collectors.toList());
+            .filter(c -> c.lignes().stream().anyMatch(p)) // on filtre chaque ligne des commandes, on garde toutes les commandes ou au moins une ligne vérifie un prédicat p passé en parametres
+            .collect(Collectors.toList());    // méthode finale qui retourne une liste des commandes 
     }
 
     /**
@@ -81,8 +95,8 @@ public class DAO {
     public Set<Produit> selectionProduits(Predicate<Produit> p) {
         return produits()
             .stream()
-            .filter(p)
-            .collect(Collectors.toSet());
+            .filter(p)// on filtre les produits par un prédicat p donné en parametres
+            .collect(Collectors.toSet());// méthode finaale qui retourne un set des produits ayant vérifié le prédicat p
     }
 
 }
